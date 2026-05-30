@@ -1,6 +1,8 @@
 create database Books_reviews;
 use Books_reviews;
 
+-- TABLES CREATION 
+
 create table authors(
 author_id float primary key,
 author nvarchar(200)
@@ -44,6 +46,9 @@ foreign key (author_id) references authors(author_id),
 foreign key (isbn) references details(isbn),
 );
 
+
+-- DATA LOADING
+
 insert into authors
 select distinct author_id ,authors
 	from merged_data;
@@ -51,6 +56,12 @@ select distinct author_id ,authors
 insert into reviews
 select distinct review_id, null , null ,null ,null, null
 	from merged_data;
+
+/* 
+Because in the merged_data table there were multiple records for combinations of attributes that should be distinct in the reviews and details tables,
+duplicate values were being created in the primary key. To address this issue, we first inserted only the IDs of these two tables using a SELECT DISTINCT statement,
+and then used a MERGE statement to populate the remaining attributes.
+*/
 
 MERGE
 INTO reviews AS target
